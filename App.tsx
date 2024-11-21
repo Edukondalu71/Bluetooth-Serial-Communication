@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { SafeAreaView, useColorScheme, StyleSheet, StatusBar} from 'react-native'
+import { SafeAreaView, useColorScheme, StyleSheet, StatusBar, Modal} from 'react-native'
 import App1 from './Blu'
 import Button from './Button';
 
@@ -11,6 +11,7 @@ interface SwitchAction {
 const App = () => {
   const theme = useColorScheme();
   const [screenState, setScreenState] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(true);
 
   const Switch_List: SwitchAction[] = useMemo(() => [
     {name: 'Turn LED ON', value: '1'},
@@ -30,17 +31,19 @@ const App = () => {
 
 
   const UpdateState = useCallback((state:boolean) => {
-    setScreenState(state);
+    setModalVisible(!state);
     StatusBar.setHidden(true);
   }, []);
 
   return (
     <>
-    { !screenState ? <App1  callBack={UpdateState}/> : 
-      <SafeAreaView style={[styles.container, {backgroundColor: theme === 'dark' ? "#000000" : "#FFFFFF"}]}>
-        {Switch_List.map((item:SwitchAction) =>  <Button key={item.value} props={item} />)}
-      </SafeAreaView>
-    }
+    <Modal animationType="fade" transparent={true} visible={modalVisible}>
+      <App1 callBack={UpdateState}/>
+    </Modal>
+    
+    <SafeAreaView style={[styles.container, {backgroundColor: theme === 'dark' ? "#000000" : "#FFFFFF"}]}>
+      {Switch_List.map((item:SwitchAction) =>  <Button key={item.value} props={{...item,UpdateState}} />)}
+    </SafeAreaView>
     </>
   )
 }

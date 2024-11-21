@@ -13,6 +13,7 @@ interface SwitchAction {
     props: {
         name: string;
         value: string;
+        UpdateState:(arg:boolean) => void
     }
   }
 
@@ -51,6 +52,7 @@ const Button:React.FC<SwitchAction> = ({props}) => {
         setLoader(false);
       })
       .catch((error:any) => {
+        props.UpdateState(false);
         ToastAndroid.show(error?.message, ToastAndroid.LONG);
         setLoader(false);
       })
